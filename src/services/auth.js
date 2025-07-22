@@ -1,4 +1,10 @@
-const  API_URL = 'http://localhost:5000/api';
+const API_URL = '/api';
+
+// Helper function to safely parse JSON or return a plain object on error/empty
+async function safeJson(response) {
+  const text = await response.text();
+  return text ? JSON.parse(text) : {};
+}
 
 export const authService = {
   async login(email, password) {
@@ -7,13 +13,10 @@ export const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    
+    const data = await safeJson(response);
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Login failed');
+      throw new Error(data.message || 'Login failed');
     }
-    
-    const data = await response.json();
     localStorage.setItem('token', data.token);
     return data.user;
   },
@@ -24,13 +27,10 @@ export const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
     });
-    
+    const data = await safeJson(response);
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Registration failed');
+      throw new Error(data.message || 'Registration failed');
     }
-    
-    const data = await response.json();
     localStorage.setItem('token', data.token);
     return data.user;
   },
@@ -39,11 +39,8 @@ export const authService = {
     const response = await fetch(`${API_URL}/auth/validate`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    
-    if (!response.ok) throw new Error('Invalid token');
-    
-    const data = await response.json();
+    const data = await safeJson(response);
+    if (!response.ok) throw new Error(data.message || 'Invalid token');
     return data.user;
   }
 };
- 
