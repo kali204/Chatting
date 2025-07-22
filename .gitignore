@@ -1,0 +1,26 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+instance/
+*.env
+
+# Node.js
+node_modules/
+build/
+dist/
+.DS_Store
+
+# IDE config files
+.vscode/
+.idea/
+# Logs
+*.log
+# Temporary files
+*.tmp
+# Database files
+*.sqlite3
+# Coverage reports
+coverage/
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
