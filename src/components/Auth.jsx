@@ -54,7 +54,7 @@ export default function Auth({ setUser }) {
           <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
             <MessageCircle className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">SecureChat</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Loopin</h1>
           <p className="text-gray-600 mt-2">Private &amp; Secure Messaging</p>
         </div>
 
