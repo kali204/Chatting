@@ -96,7 +96,8 @@ pymongo==4.11.2
 PyMySQL==1.1.0
 pynput==1.7.7
 pyparsing==3.2.1
-pypiwin32==223
+pywin32>=223; sys_platform == "win32"
+pypiwin32; sys_platform == "win32"
 PyQt5==5.15.11
 PyQt5-Qt5==5.15.2
 PyQt5_sip==12.17.0
