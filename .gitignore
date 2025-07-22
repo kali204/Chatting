@@ -8,7 +8,6 @@ instance/
 # Node.js
 node_modules/
 build/
-dist/
 .DS_Store
 
 # IDE config files
