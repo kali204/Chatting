@@ -3,7 +3,7 @@ import { socketService } from "../services/socket.js"; // Also add extension for
 
 // Add the .jsx extension to all your component imports
 import ContactAvatar from "./ContactAvatar.jsx";
-import SidebarContact from "./SidebarContact.jsx";
+import SidebarContact from "./SideBarContact.jsx";
 import PendingRequests from "./PendingRequests.jsx";
 import AddContactModal from "./AddContactModal.jsx";
 import MessageBubble from "./MessageBubble.jsx";
