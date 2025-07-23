@@ -196,6 +196,18 @@ def register():
         token = token.decode('utf-8')
     return jsonify({'token': token, 'user': {'id': user.id, 'username': user.username, 'email': user.email}})
 
+@app.route('/api/auth/register', methods=['GET'])
+def check_email_exists():
+    email = request.args.get('email')
+    if not email:
+        return jsonify({'message': 'Email is required'}), 400
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'exists': True})
+    return jsonify({'exists': False})
+
+
+
 @app.route('/api/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -212,6 +224,24 @@ def login():
             token = token.decode('utf-8')
         return jsonify({'token': token, 'user': {'id': user.id, 'username': user.username, 'email': user.email}})
     return jsonify({'message': 'Invalid credentials'}), 401
+
+@app.route('/api/auth/login', methods=['GET'])
+def check_username_exists():
+    username = request.args.get('username')
+    if not username:
+        return jsonify({'message': 'Username is required'}), 400
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return jsonify({'exists': True})
+    return jsonify({'exists': False})
+
+@app.route('/api/auth/logout', methods=['POST'])
+@token_required
+def logout(current_user):
+    # For stateless JWT, logout is handled client-side by deleting the token
+    return jsonify({'message': 'Logged out successfully'})
+
+
 
 @app.route('/api/auth/validate', methods=['GET'])
 @token_required
