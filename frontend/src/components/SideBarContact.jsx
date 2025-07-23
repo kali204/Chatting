@@ -1,6 +1,5 @@
 import ContactAvatar from "./ContactAvatar";
-import SettingsModal from "./Setting";
-import { useState } from "react";
+
 export default function SidebarContact({ user, active, onClick, lastMsg }) {
   return (
     <div

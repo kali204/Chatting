@@ -1,15 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import { socketService } from "../services/socket";
-import ContactAvatar from "./ContactAvatar";
-import SidebarContact from "./SidebarContact";
-import PendingRequests from "./PendingRequests";
-import AddContactModal from "./AddContactModal";
-import MessageBubble from "./MessageBubble";
-import ProfileModal from "./Profile";
-import Nearby from "./Nearby";
-import SettingsModal from "./Setting";
-import FilePreviewModal from "./FilePreviewModal";
-import { useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { socketService } from "../services/socket.js"; // Also add extension for your services
+
+// Add the .jsx extension to all your component imports
+import ContactAvatar from "./ContactAvatar.jsx";
+import SidebarContact from "./SidebarContact.jsx";
+import PendingRequests from "./PendingRequests.jsx";
+import AddContactModal from "./AddContactModal.jsx";
+import MessageBubble from "./MessageBubble.jsx";
+import ProfileModal from "./Profile.jsx";
+import Nearby from "./Nearby.jsx";
+import SettingsModal from "./Setting.jsx";
+import FilePreviewModal from "./FilePreviewModal.jsx";
 
 export default function Chat({ user, setUser }) {
   const [contacts, setContacts] = useState([]);
