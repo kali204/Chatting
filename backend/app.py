@@ -35,6 +35,7 @@ def serve(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
@@ -496,6 +497,8 @@ def all_exception_handler(error):
 
 # --- Main Entrypoint ---
 if __name__ == '__main__':
+    app = Flask(__name__, static_folder="static", static_url_path="")
+
     with app.app_context():
         db.create_all()
     socketio.run(app, host="0.0.0.0", port=10000, debug=True)
