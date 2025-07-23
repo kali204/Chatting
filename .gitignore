@@ -8,7 +8,7 @@ instance/
 # Node.js
 node_modules/
 build/
-dist/
+
 
 # IDE & OS files
 .vscode/
