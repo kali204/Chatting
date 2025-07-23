@@ -9,7 +9,7 @@ class SocketService {
     if (this.socket && this.socket.connected) {
       return; // Don't reconnect if already connected
     }
-    this.socket = io('http://localhost:5000', {
+    this.socket = io('https://loopin-1vvf.onrender.com', {
       auth: {
         token: localStorage.getItem('token'),
       },
