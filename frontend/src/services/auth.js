@@ -1,4 +1,5 @@
-const API_URL = '/api';
+// Use your actual Render backend URL here
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 // Helper function to safely parse JSON or return a plain object on error/empty
 async function safeJson(response) {
@@ -8,7 +9,7 @@ async function safeJson(response) {
 
 export const authService = {
   async login(email, password) {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -22,7 +23,7 @@ export const authService = {
   },
 
   async register(username, email, password) {
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_URL}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
@@ -36,7 +37,7 @@ export const authService = {
   },
 
   async validateToken(token) {
-    const response = await fetch(`${API_URL}/auth/validate`, {
+    const response = await fetch(`${API_URL}/api/auth/validate`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await safeJson(response);

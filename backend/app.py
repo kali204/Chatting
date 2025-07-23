@@ -13,11 +13,11 @@ import traceback
 from math import radians, cos, sin, asin, sqrt
 
 
-
 # --- App Setup ---
 app = Flask(__name__, static_folder="dist", static_url_path="/")
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1947@localhost/chatapp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:eTVSDUdBxsMePxLwTVZjHYOoBhzYBHDY@ballast.proxy.rlwy.net:57451/railway'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 UPLOAD_FOLDER = 'uploads'
