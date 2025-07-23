@@ -27,6 +27,10 @@ db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app)
 
+@app.route('/')
+def home():
+    return jsonify({"message": "Backend API working"})
+
 # --- Serve React Build ---
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
