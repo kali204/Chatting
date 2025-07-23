@@ -8,18 +8,9 @@ instance/
 # Node.js
 node_modules/
 build/
-.DS_Store
+dist/
 
-# IDE config files
+# IDE & OS files
 .vscode/
 .idea/
-# Logs
-*.log
-# Temporary files
-*.tmp
-# Database files
-*.sqlite3
-# Coverage reports
-coverage/
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+.DS_Store
