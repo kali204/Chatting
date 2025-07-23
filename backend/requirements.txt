@@ -139,3 +139,7 @@ wsproto==1.2.0
 xlwt==1.3.0
 xmltodict==0.14.2
 yt-dlp==2025.1.26
+flask
+flask-socketio
+eventlet
+gunicorn

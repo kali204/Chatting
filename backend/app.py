@@ -11,6 +11,7 @@ import os
 from functools import wraps
 import traceback
 from math import radians, cos, sin, asin, sqrt
+from waitress import serve
 
 
 # --- App Setup ---
@@ -497,8 +498,6 @@ def all_exception_handler(error):
 
 # --- Main Entrypoint ---
 if __name__ == '__main__':
-    app = Flask(__name__, static_folder="static", static_url_path="")
-
     with app.app_context():
         db.create_all()
-    socketio.run(app, host="0.0.0.0", port=10000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=10000, debug=True)
