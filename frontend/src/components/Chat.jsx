@@ -8,7 +8,7 @@ import PendingRequests from "./PendingRequests.jsx";
 import AddContactModal from "./AddContactModal.jsx";
 import MessageBubble from "./MessageBubble.jsx";
 import ProfileModal from "./Profile.jsx";
-import Nearby from "./nearby.jsx";
+import Nearby from "./nearby.tsx";
 import SettingsModal from "./Setting.jsx";
 import FilePreviewModal from "./FilePreviewModal.jsx";
 
