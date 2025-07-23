@@ -1,4 +1,5 @@
-const  API_URL = '/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
