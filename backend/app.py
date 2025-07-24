@@ -11,17 +11,19 @@ import os
 from functools import wraps
 import traceback
 from math import radians, cos, sin, asin, sqrt
+import dotenv
+# Load environment variables from .env file
+dotenv.load_dotenv()
 
 
 # --- App Setup ---
 app = Flask(__name__, static_folder="dist", static_url_path="/")
-app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:eTVSDUdBxsMePxLwTVZjHYOoBhzYBHDY@ballast.proxy.rlwy.net:57451/railway'
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")  # from Render ENV
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_pre_ping': True,
-    'pool_recycle': 280
+    'pool_recycle': 280,
 }
 
 
