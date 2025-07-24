@@ -32,7 +32,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-CORS(app, origins=["https://chatting-nine-eta.vercel.app"], supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
 
 @app.route('/')
 def home():
