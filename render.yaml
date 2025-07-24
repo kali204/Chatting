@@ -2,8 +2,8 @@ services:
   - type: web
     name: chatting-backend
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    buildCommand: ./build.sh && pip install -r backend/requirements.txt
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
         value: mysql://root:MFWAVMkebSoKkJzkHUCLOLugWinhlMBr@mysql.railway.internal:3306/railway
