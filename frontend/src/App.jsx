@@ -1,17 +1,25 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Auth from './components/Auth';
 import Chat from './components/Chat';
+import ResetPassword from './components/ResetPassword';
 import { authService } from './services/auth';
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReset, setShowReset] = useState(false); // Added state for reset screen
+
+  // Show reset password page
+  if (showReset) {
+    return <ResetPassword setShowReset={setShowReset} />;
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      authService.validateToken(token)
-        .then(userData => setUser(userData))
+      authService
+        .validateToken(token)
+        .then((userData) => setUser(userData))
         .catch(() => localStorage.removeItem('token'))
         .finally(() => setLoading(false));
     } else {
@@ -27,8 +35,11 @@ function App() {
     );
   }
 
-  return user ? <Chat user={user} setUser={setUser} /> : <Auth setUser={setUser} />;
+  return user ? (
+    <Chat user={user} setUser={setUser} />
+  ) : (
+    <Auth setUser={setUser} setShowReset={setShowReset} />
+  );
 }
 
 export default App;
- 

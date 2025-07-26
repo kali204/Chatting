@@ -7,14 +7,17 @@ class SocketService {
 
   connect(userId) {
     if (this.socket && this.socket.connected) {
-      return; // Don't reconnect if already connected
+      return; // Already connected
     }
-    this.socket = io('https://loopin-1vvf.onrender.com', {
+
+    // Automatically use current origin (e.g., https://ngrok-url) instead of localhost
+    this.socket = io('/', {
       auth: {
         token: localStorage.getItem('token'),
       },
-      transports: ["websocket"], // Optional: enforce WebSocket (not polling)
+      transports: ['websocket'], // Force WebSocket
     });
+
     this.socket.emit('join', userId);
   }
 
@@ -33,8 +36,7 @@ class SocketService {
 
   onMessage(callback) {
     if (this.socket) {
-      // Remove previous listeners before registering a new one
-      this.socket.off('message'); 
+      this.socket.off('message'); // Remove old listeners
       this.socket.on('message', callback);
     }
   }

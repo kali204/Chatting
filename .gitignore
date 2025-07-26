@@ -1,16 +1,18 @@
 # Python
-venv/
 __pycache__/
 *.pyc
 instance/
-*.env
+.env
+venv/
+*.db
 
-# Node.js
+# Node
 node_modules/
+dist/
 build/
 
+# Logs
+*.log
 
-# IDE & OS files
+# VSCode
 .vscode/
-.idea/
-.DS_Store

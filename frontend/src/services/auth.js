@@ -1,47 +1,65 @@
-// Use your actual Render backend URL here
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-// Helper function to safely parse JSON or return a plain object on error/empty
+// src/services/auth.js
 async function safeJson(response) {
-  const text = await response.text();
-  return text ? JSON.parse(text) : {};
+  try {
+    const text = await response.text();
+    return text ? JSON.parse(text) : {};
+  } catch {
+    return {};
+  }
 }
+
+const BASE = '/api';
 
 export const authService = {
   async login(email, password) {
-    const response = await fetch(`${API_URL}/api/auth/login`, {
+    const res = await fetch(`${BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const data = await safeJson(response);
-    if (!response.ok) {
-      throw new Error(data.message || 'Login failed');
-    }
+    const data = await safeJson(res);
+    if (!res.ok) throw new Error(data.message || 'Login failed');
     localStorage.setItem('token', data.token);
-    return data.user;
+    return data.user || {};
   },
 
   async register(username, email, password) {
-    const response = await fetch(`${API_URL}/api/auth/register`, {
+    const res = await fetch(`${BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password })
     });
-    const data = await safeJson(response);
-    if (!response.ok) {
-      throw new Error(data.message || 'Registration failed');
-    }
+    const data = await safeJson(res);
+    if (!res.ok) throw new Error(data.message || 'Registration failed');
     localStorage.setItem('token', data.token);
-    return data.user;
+    return data.user || {};
   },
 
   async validateToken(token) {
-    const response = await fetch(`${API_URL}/api/auth/validate`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+    const res = await fetch(`${BASE}/auth/validate`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-    const data = await safeJson(response);
-    if (!response.ok) throw new Error(data.message || 'Invalid token');
-    return data.user;
+    const data = await safeJson(res);
+    if (!res.ok) throw new Error(data.message || 'Invalid token');
+    return data.user || {};
+  },
+
+  async resetPassword(email, password) {
+  try {
+    const res = await fetch('/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Failed to reset password');
+    }
+    return await res.json();
+  } catch (err) {
+    throw err;
   }
+}
+
 };

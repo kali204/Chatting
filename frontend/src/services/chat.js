@@ -1,5 +1,4 @@
-const API_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-
+const API_URL = '/api';
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
@@ -11,6 +10,7 @@ export const chatService = {
     const response = await fetch(`${API_URL}/users`, {
       headers: getAuthHeaders()
     });
+    if (!response.ok) throw new Error('Failed to fetch users');
     return response.json();
   },
 
@@ -18,6 +18,7 @@ export const chatService = {
     const response = await fetch(`${API_URL}/messages/${userId}`, {
       headers: getAuthHeaders()
     });
+    if (!response.ok) throw new Error('Failed to fetch messages');
     return response.json();
   },
 
@@ -27,7 +28,7 @@ export const chatService = {
       headers: getAuthHeaders(),
       body: JSON.stringify(message)
     });
+    if (!response.ok) throw new Error('Failed to send message');
     return response.json();
   }
 };
- 

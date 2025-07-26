@@ -1,3 +1,4 @@
+# top
 from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit, join_room
@@ -12,41 +13,39 @@ from functools import wraps
 import traceback
 from math import radians, cos, sin, asin, sqrt
 import dotenv
-# Load environment variables from .env file
+from urllib.parse import urljoin
+import os
+import smtplib
+import secrets
+from email.mime.text import MIMEText
+
+
+RESET_TOKEN_LIFETIME_MIN = 30  # minutes
+
+
 dotenv.load_dotenv()
 
-
-# --- App Setup ---
 app = Flask(__name__, static_folder="dist", static_url_path="/")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")  # from Render ENV
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "dev-secret")  # make sure you set this in prod
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_pre_ping': True,
-    'pool_recycle': 280,
-}
-
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True, 'pool_recycle': 280}
 
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 db = SQLAlchemy(app)
-socketio = SocketIO(app, cors_allowed_origins="*")
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")  # important on PaaS
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 
-@app.route('/')
-def home():
-    return jsonify({"message": "Backend API working"})
-
-# --- Serve React Build ---
+# If you **really** want to serve React from Flask, keep this. Otherwise delete it.
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    if app.static_folder and path and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route('/uploads/<filename>')
@@ -74,6 +73,15 @@ class User(db.Model):
     last_seen_visible = db.Column(db.Boolean, default=True)
     notifications = db.Column(db.Boolean, default=True)
     dark_mode = db.Column(db.Boolean, default=False)
+# add near your other models
+class PasswordReset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, index=True)
+    token = db.Column(db.String(128), unique=True, nullable=False, index=True)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User')
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -129,6 +137,43 @@ def haversine(lat1, lon1, lat2, lon2):
     a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
     return r * c
+
+#---- email sending utility ----
+def send_reset_email(to_email, reset_link):
+    SMTP_HOST = os.getenv("SMTP_HOST", "sandbox.smtp.mailtrap.io")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "2525"))
+    SMTP_USER = os.getenv("SMTP_USER")
+    SMTP_PASS = os.getenv("SMTP_PASS")
+
+    subject = "Reset your Loopin password"
+    body = f"""Hi,
+
+We received a request to reset your password.
+
+Click the link below to reset it (valid for {RESET_TOKEN_LIFETIME_MIN} minutes):
+
+{reset_link}
+
+If you didn't request this, just ignore this email.
+
+Thanks!
+"""
+
+    msg = MIMEText(body)
+    msg["Subject"] = subject
+    msg["From"] = "abhaystark77@gmail.com"  # Change if needed
+    msg["To"] = to_email
+
+    try:
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+            server.starttls()  # Secure connection
+            server.login(SMTP_USER, SMTP_PASS)
+            server.sendmail(msg["From"], [to_email], msg.as_string())
+        print(f"Reset email sent to {to_email}")
+    except Exception as e:
+        print("EMAIL SEND FAILED:", e)
+        print("Reset link:", reset_link)  # Debugging fallback
+
 # --- User Profile Routes ---
 @app.route('/api/profile', methods=['GET'])
 @token_required
@@ -246,6 +291,46 @@ def check_username_exists():
     if user:
         return jsonify({'exists': True})
     return jsonify({'exists': False})
+
+@app.route('/api/auth/forgot', methods=['POST'])
+def forgot_password():
+    data = request.get_json() or {}
+    email = data.get('email')
+    new_password = data.get('password')
+
+    if not email or not new_password:
+        return jsonify({"message": "Email and new password are required"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"message": "No account found with this email"}), 404
+
+    user.password_hash = generate_password_hash(new_password)
+    db.session.commit()
+
+    return jsonify({"message": "Password reset successfully"})
+
+
+@app.route('/api/auth/reset-password', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    email = data.get('email')
+    new_password = data.get('password')
+
+    if not email or not new_password:
+        return jsonify({'message': 'Email and new password required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    # Hash new password (assuming you're using werkzeug.security)
+    from werkzeug.security import generate_password_hash
+    user.password_hash = generate_password_hash(new_password)
+    db.session.commit()
+
+    return jsonify({'message': 'Password reset successfully'})
+
 
 @app.route('/api/auth/logout', methods=['POST'])
 @token_required
@@ -542,4 +627,4 @@ def all_exception_handler(error):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    socketio.run(app, host='0.0.0.0', port=10000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
