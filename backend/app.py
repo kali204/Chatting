@@ -47,11 +47,6 @@ def serve(path=""):
     else:
         return send_from_directory(app.static_folder, "index.html")
 
-# Example API route (make sure this is separate from static route)
-@app.route("/api/register", methods=["POST"])
-def register():
-    # Your registration logic here
-    return {"message": "Registered"}
 
 # --- Models ---
 class User(db.Model):
