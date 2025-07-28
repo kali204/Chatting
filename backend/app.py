@@ -48,6 +48,7 @@ def serve(path=""):
         return send_from_directory(app.static_folder, "index.html")
 
 
+
 # --- Models ---
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -244,15 +245,13 @@ def register():
         token = token.decode('utf-8')
     return jsonify({'token': token, 'user': {'id': user.id, 'username': user.username, 'email': user.email}})
 
-@app.route('/api/auth/register', methods=['GET'])
+@app.route('/api/auth/check-email', methods=['GET'])
 def check_email_exists():
     email = request.args.get('email')
     if not email:
         return jsonify({'message': 'Email is required'}), 400
     user = User.query.filter_by(email=email).first()
-    if user:
-        return jsonify({'exists': True})
-    return jsonify({'exists': False})
+    return jsonify({'exists': bool(user)})
 
 
 
@@ -273,15 +272,14 @@ def login():
         return jsonify({'token': token, 'user': {'id': user.id, 'username': user.username, 'email': user.email}})
     return jsonify({'message': 'Invalid credentials'}), 401
 
-@app.route('/api/auth/login', methods=['GET'])
+
+@app.route('/api/auth/check-username', methods=['GET'])
 def check_username_exists():
     username = request.args.get('username')
     if not username:
         return jsonify({'message': 'Username is required'}), 400
     user = User.query.filter_by(username=username).first()
-    if user:
-        return jsonify({'exists': True})
-    return jsonify({'exists': False})
+    return jsonify({'exists': bool(user)})
 
 @app.route('/api/auth/forgot', methods=['POST'])
 def forgot_password():
