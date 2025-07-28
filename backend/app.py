@@ -25,7 +25,7 @@ RESET_TOKEN_LIFETIME_MIN = 30  # minutes
 
 dotenv.load_dotenv()
 
-app = Flask(__name__, static_folder="dist", static_url_path="/")
+app = Flask(__name__, static_folder="dist", static_url_path="")
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "dev-secret")  # make sure you set this in prod
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")  
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -39,23 +39,19 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")  # imp
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 
-# If you **really** want to serve React from Flask, keep this. Otherwise delete it.
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if app.static_folder and path and os.path.exists(os.path.join(app.static_folder, path)):
+@app.route("/")
+@app.route("/<path:path>")
+def serve(path=""):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, 'index.html')
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
-
-# --- API Health Check ---
-@app.route('/api/ping')
-def ping():
-    return jsonify({'status': 'ok'})
+# Example API route (make sure this is separate from static route)
+@app.route("/api/register", methods=["POST"])
+def register():
+    # Your registration logic here
+    return {"message": "Registered"}
 
 # --- Models ---
 class User(db.Model):
