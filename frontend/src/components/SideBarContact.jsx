@@ -1,32 +1,36 @@
 import ContactAvatar from "./ContactAvatar";
+import './css/SidebarContact.css';
 
 export default function SidebarContact({ user, active, onClick, lastMsg }) {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center gap-3 px-4 py-3 cursor-pointer rounded-lg transition ${
-        active ? "bg-gray-100" : "hover:bg-gray-50"
-      }`}
-      style={{
-        minHeight: "3.25rem",
-        borderLeft: active ? "5px solid #4299e1" : "5px solid transparent",
-      }}
+      className={`sidebar-contact ${active ? 'active' : ''}`}
     >
-      <ContactAvatar
-        username={user.username}
-        id={user.id}
-        avatarUrl={user.avatar_url}
-      />
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="font-semibold text-base text-gray-900">
-          {user.username}
-        </span>
-        <span className="text-xs text-gray-400 truncate max-w-[140px]">
-          {lastMsg || <>&nbsp;</>}
-        </span>
+      <div className="contact-indicator"></div>
+      
+      <div className="contact-content">
+        <div className="avatar-wrapper">
+          <ContactAvatar
+            username={user.username}
+            id={user.id}
+            avatarUrl={user.avatar_url}
+          />
+          <div className="online-status"></div>
+        </div>
+        
+        <div className="contact-info">
+          <div className="contact-header">
+            <span className="username">{user.username}</span>
+            <span className="timestamp">2m</span>
+          </div>
+          <div className="last-message">
+            {lastMsg || <span className="no-message">No messages yet</span>}
+          </div>
+        </div>
       </div>
       
-
+      <div className="hover-glow"></div>
     </div>
   );
 }

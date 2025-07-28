@@ -11,6 +11,7 @@ import ProfileModal from "./Profile.jsx";
 import Nearby from "./nearby.tsx"; // Assuming this is a TypeScript file, you can import it directly
 import SettingsModal from "./Setting.jsx";
 import FilePreviewModal from "./FilePreviewModal.jsx";
+import "./css/chat.css"; // Ensure this path is correct
 
 export default function Chat({ user, setUser }) {
   const [contacts, setContacts] = useState([]);
@@ -295,79 +296,46 @@ export default function Chat({ user, setUser }) {
   };
 
   return (
-    <div className="flex h-screen bg-white md:bg-[#f6f7fb] md:rounded-2xl md:shadow-lg overflow-hidden md:border md:border-gray-200">
+    <div className="chat-layout">
       {/* Sidebar */}
-      <aside
-        className={`min-w-[280px] w-full md:w-1/3 bg-white border-r flex flex-col transition-transform duration-300 ease-in-out ${
-          selectedUser ? "-translate-x-full md:translate-x-0" : "translate-x-0"
-        }`}
-      >
-        <div className="flex items-center justify-between px-6 pt-7 pb-5 border-b">
-          <span className="font-semibold text-xl text-gray-900">
+      <aside className={`chat-sidebar ${selectedUser ? 'sidebar-hidden' : 'sidebar-visible'}`}>
+        <div className="sidebar-header">
+          <span className="sidebar-title">
             {showNearby ? "Nearby Users" : "Contacts"}
           </span>
-          <div className="flex gap-2">
+          <div className="sidebar-actions">
             <button
               title={showNearby ? "Show Contacts" : "Show Nearby Users"}
-              className="p-1 rounded hover:bg-gray-100"
+              className="action-button"
               onClick={() => setShowNearby((v) => !v)}
             >
               {showNearby ? (
-                <svg width={20} height={20} fill="none" viewBox="0 0 24 24">
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9"
-                    stroke="#4F8EF7"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M8 15h8"
-                    stroke="#4F8EF7"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                <svg className="action-icon" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
+                  <path d="M8 15h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               ) : (
-                <svg width={20} height={20} fill="none" viewBox="0 0 24 24">
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                    stroke="#4F8EF7"
-                    strokeWidth="2"
-                  />
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="9"
-                    stroke="#4F8EF7"
-                    strokeWidth="2"
-                  />
+                <svg className="action-icon" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/>
                 </svg>
               )}
             </button>
             {!showNearby && (
               <button
                 onClick={() => setShowAddContact(true)}
-                className="p-1 rounded hover:bg-gray-100"
+                className="action-button"
                 title="Add Contact"
               >
-                <svg width={20} height={20} fill="none" viewBox="0 0 24 24">
-                  <path
-                    d="M12 5v14m7-7H5"
-                    stroke="#4F8EF7"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                <svg className="action-icon" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 5v14m7-7H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
               </button>
             )}
           </div>
         </div>
 
-        {/* Contact List / Nearby List */}
-        <div className="flex-1 overflow-y-auto py-4 min-h-0">
+        <div className="contacts-container">
           {showNearby ? (
             <Nearby />
           ) : (
@@ -419,37 +387,20 @@ export default function Chat({ user, setUser }) {
       </aside>
 
       {/* Main Chat Pane */}
-      <main
-        className={`absolute top-0 left-0 w-full h-full md:static flex-1 flex flex-col bg-white transition-transform duration-300 ease-in-out ${
-          selectedUser ? "translate-x-0" : "translate-x-full md:translate-x-0"
-        }`}
-      >
+      <main className={`chat-main ${selectedUser ? 'main-visible' : 'main-hidden'}`}>
         {/* Header */}
-        <div className="flex items-center px-4 md:px-8 py-5 border-b gap-3">
-          {/* Back Button */}
+        <div className="chat-header">
           <button
-            className="p-2 rounded-full hover:bg-gray-100 md:hidden"
+            className="back-button"
             title="Back to contacts"
             onClick={() => setSelectedUser(null)}
           >
-            <svg
-              width={20}
-              height={20}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
+            <svg className="back-icon" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
           </button>
 
-          {/* Left Side: Selected User Info */}
-          <div className="flex items-center gap-3 flex-1">
+          <div className="chat-user-info">
             {selectedUser ? (
               <>
                 <ContactAvatar
@@ -457,19 +408,19 @@ export default function Chat({ user, setUser }) {
                   id={selectedUser.id}
                   avatarUrl={selectedUser.avatar_url}
                 />
-                <span className="font-semibold text-lg text-gray-800">
-                  {selectedUser.username}
-                </span>
+                <div className="user-details">
+                  <span className="username">{selectedUser.username}</span>
+                  <span className="status">Online</span>
+                </div>
               </>
             ) : (
-              <div className="h-11"></div> // Placeholder to prevent layout shift
+              <div className="placeholder-header"></div>
             )}
           </div>
 
-          {/* Right Side: Profile & Settings Dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="profile-menu" ref={dropdownRef}>
             <button
-              className="rounded-full ring-2 ring-blue-300 hover:ring-blue-500 transition-all overflow-hidden w-11 h-11 flex items-center justify-center bg-blue-100"
+              className="profile-button"
               title="My Account"
               onClick={() => setShowDropdown((prev) => !prev)}
             >
@@ -478,66 +429,234 @@ export default function Chat({ user, setUser }) {
                   src={
                     user.avatar_url?.startsWith("http")
                       ? user.avatar_url
-                      : `${process.env.REACT_APP_API_BASE_URL || ""}${
-                          user.avatar_url
-                        }`
+                      : `${process.env.REACT_APP_API_BASE_URL || ""}${user.avatar_url}`
                   }
                   alt="My Profile"
-                  className="w-11 h-11 rounded-full object-cover"
+                  className="profile-avatar"
                 />
               ) : (
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="profile-initials">
                   {user.username ? user.username[0].toUpperCase() : "?"}
                 </span>
               )}
             </button>
 
-            {/* Dropdown Menu */}
             {showDropdown && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-20 border">
-                <div className="py-1">
-                  <a
-                    href="#"
+              <div className="dropdown-menu">
+                <div className="dropdown-content">
+                  <button
                     onClick={(e) => {
                       e.preventDefault();
                       setShowProfile(true);
                       setShowDropdown(false);
                     }}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="dropdown-item"
                   >
+                    <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
                     My Profile
-                  </a>
-                  <a
-                    href="#"
+                  </button>
+                  <button
                     onClick={(e) => {
                       e.preventDefault();
-                      // Replace handleSettings with setShowSettings(true) if that's the handler
                       setShowSettings(true);
                       setShowDropdown(false);
                     }}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    className="dropdown-item"
                   >
+                    <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
                     Settings
-                  </a>
-                  <div className="border-t my-1"></div>
-                  <a
-                    href="#"
+                  </button>
+                  <div className="dropdown-divider"></div>
+                  <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleLogout(); // Assuming you have a handleLogout function
+                      handleLogout();
                       setShowDropdown(false);
                     }}
-                    className="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                    className="dropdown-item logout"
                   >
+                    <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
                     Logout
-                  </a>
+                  </button>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Your Settings Modal and Profile Modal remain the same */}
+        {/* Messages */}
+        <div className="messages-container" ref={chatScrollRef}>
+          {selectedUser ? (
+            <div className="messages-list">
+              {messages.map((msg, idx) =>
+                msg ? (
+                  <MessageBubble
+                    key={msg.id || idx}
+                    msg={msg}
+                    isSender={msg.senderId === user.id}
+                  />
+                ) : null
+              )}
+            </div>
+          ) : (
+            <div className="empty-chat">
+              <div className="empty-icon">💬</div>
+              <h3>Welcome to Loopin</h3>
+              <p>Select a contact to start chatting</p>
+            </div>
+          )}
+        </div>
+
+        {/* Message Input */}
+        {selectedUser && (
+          <form
+            className="message-input-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (text.trim()) handleSend();
+            }}
+          >
+            {/* Attachment Menu */}
+            <div className="attachment-wrapper" ref={attachmentMenuRef}>
+              <button
+                type="button"
+                className="attachment-button"
+                title="Attach"
+                onClick={() => setShowAttachmentMenu((prev) => !prev)}
+                disabled={isRecording}
+              >
+                <svg className="attachment-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                </svg>
+              </button>
+
+              {showAttachmentMenu && (
+                <div className="attachment-menu">
+                  <button
+                    type="button"
+                    className="attachment-option"
+                    onClick={() => {
+                      cameraInputRef.current.click();
+                      setShowAttachmentMenu(false);
+                    }}
+                  >
+                    <div className="option-icon camera">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      </svg>
+                    </div>
+                    <span>Camera</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="attachment-option"
+                    onClick={() => {
+                      imageInputRef.current.click();
+                      setShowAttachmentMenu(false);
+                    }}
+                  >
+                    <div className="option-icon gallery">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <span>Photo & Video</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="attachment-option"
+                    onClick={() => {
+                      documentInputRef.current.click();
+                      setShowAttachmentMenu(false);
+                    }}
+                  >
+                    <div className="option-icon document">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                      </svg>
+                    </div>
+                    <span>Document</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Hidden File Inputs */}
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture
+              onChange={handleFileSelect}
+              style={{ display: "none" }}
+            />
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleFileSelect}
+              style={{ display: "none" }}
+            />
+            <input
+              ref={documentInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
+              onChange={handleFileSelect}
+              style={{ display: "none" }}
+            />
+
+            {/* Text Input */}
+            <div className="input-wrapper">
+              <input
+                className="message-input"
+                placeholder="Type a message..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                autoFocus
+                disabled={isRecording}
+              />
+              {isRecording && <div className="recording-indicator">Recording...</div>}
+            </div>
+
+            {/* Send/Voice Button */}
+            {text.trim() ? (
+              <button type="submit" className="send-button" aria-label="Send">
+                <svg className="send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={`voice-button ${isRecording ? 'recording' : ''}`}
+                onClick={isRecording ? handleStopRecording : handleStartRecording}
+                title={isRecording ? "Stop Recording" : "Start Recording"}
+              >
+                {isRecording ? (
+                  <svg className="stop-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 6h12v12H6z"/>
+                  </svg>
+                ) : (
+                  <svg className="mic-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1.2-9.1c0-.66.54-1.2 1.2-1.2s1.2.54 1.2 1.2v6.2c0 .66-.54 1.2-1.2 1.2s-1.2-.54-1.2-1.2V4.9zM17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                  </svg>
+                )}
+              </button>
+            )}
+          </form>
+        )}
+
+        {/* Modals */}
         {showSettings && (
           <SettingsModal
             user={user}
@@ -555,256 +674,6 @@ export default function Chat({ user, setUser }) {
             }}
           />
         )}
-
-        {/* Messages */}
-        <div
-          className="flex-1 px-4 md:px-8 py-7 overflow-y-auto"
-          ref={chatScrollRef}
-        >
-          {selectedUser ? (
-            <div className="flex flex-col">
-              {messages.map((msg, idx) =>
-                msg ? (
-                  <MessageBubble
-                    key={msg.id || idx}
-                    msg={msg}
-                    isSender={msg.senderId === user.id}
-                  />
-                ) : null
-              )}
-            </div>
-          ) : (
-            <div className="hidden md:flex h-full items-center justify-center text-gray-400 text-center">
-              Select a contact to start chatting
-            </div>
-          )}
-        </div>
-        {/* Message input */}
-        {selectedUser && (
-          <form
-            className="flex items-center px-2 py-2 md:px-4 md:py-3 bg-white border-t gap-2 md:gap-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (text.trim()) handleSend();
-            }}
-          >
-            {/* // This code goes inside your <form> element */}
-
-            {/* Attachment Button & Menu */}
-            <div className="relative" ref={attachmentMenuRef}>
-              <button
-                type="button"
-                className="p-3 rounded-full text-gray-500 hover:bg-gray-100 transition"
-                title="Attach"
-                onClick={() => setShowAttachmentMenu((prev) => !prev)}
-                disabled={isRecording}
-              >
-                {/* Paperclip Icon */}
-                <svg
-                  width={22}
-                  height={22}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-                </svg>
-              </button>
-
-              {/* Attachment Pop-up Menu */}
-              {showAttachmentMenu && (
-                <div className="absolute bottom-full mb-2 w-56 bg-white rounded-lg shadow-xl border z-10 overflow-hidden">
-                  {/* --- FIX IS HERE: Use <button> instead of <label> and trigger clicks programmatically --- */}
-
-                  {/* Camera Option */}
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      cameraInputRef.current.click();
-                      setShowAttachmentMenu(false);
-                    }}
-                  >
-                    <svg
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    <span>Camera</span>
-                  </button>
-
-                  {/* Image/Gallery Option */}
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      imageInputRef.current.click();
-                      setShowAttachmentMenu(false);
-                    }}
-                  >
-                    <svg
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <span>Photo & Video</span>
-                  </button>
-
-                  {/* Document Option */}
-                  <button
-                    type="button"
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-left text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      documentInputRef.current.click();
-                      setShowAttachmentMenu(false);
-                    }}
-                  >
-                    <svg
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                    <span>Document</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Hidden File Inputs */}
-            <input
-              id="camera-input"
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture
-              onChange={handleFileSelect}
-              style={{ display: "none" }}
-            />
-            <input
-              id="image-input"
-              ref={imageInputRef}
-              type="file"
-              accept="image/*,video/*"
-              onChange={handleFileSelect}
-              style={{ display: "none" }}
-            />
-            <input
-              id="document-input"
-              ref={documentInputRef}
-              type="file"
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
-              onChange={handleFileSelect}
-              style={{ display: "none" }}
-            />
-
-            {/* Text Input */}
-            <input
-              className="flex-1 px-4 py-2.5 text-base rounded-full border border-gray-200 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Type a message"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              autoFocus
-              disabled={isRecording}
-            />
-
-            {/* Conditional Send / Voice Record Button */}
-            {text.trim() ? (
-              <button
-                type="submit"
-                className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 text-white transition shadow-md"
-                aria-label="Send"
-              >
-                <svg
-                  width={24}
-                  height={24}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                  />
-                </svg>
-              </button>
-            ) : (
-              <button
-                type="button"
-                className={`w-12 h-12 flex items-center justify-center rounded-full transition shadow-md ${
-                  isRecording
-                    ? "bg-red-500 text-white animate-pulse"
-                    : "bg-green-500 text-white hover:bg-green-600"
-                }`}
-                onClick={
-                  isRecording ? handleStopRecording : handleStartRecording
-                }
-                title={isRecording ? "Stop Recording" : "Start Recording"}
-              >
-                {/* Mic / Stop Icons */}
-                {isRecording ? (
-                  <svg
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M6 6h12v12H6z" />
-                  </svg>
-                ) : (
-                  <svg
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1.2-9.1c0-.66.54-1.2 1.2-1.2s1.2.54 1.2 1.2v6.2c0 .66-.54 1.2-1.2 1.2s-1.2-.54-1.2-1.2V4.9zM17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                  </svg>
-                )}
-              </button>
-            )}
-          </form>
-        )}
-        {/* Modals */}
         {showAddContact && (
           <AddContactModal
             onClose={() => setShowAddContact(false)}
@@ -817,17 +686,6 @@ export default function Chat({ user, setUser }) {
               })
                 .then((res) => res.json())
                 .then((data) => setContacts(Array.isArray(data) ? data : []));
-            }}
-          />
-        )}
-        {showProfile && (
-          <ProfileModal
-            user={user}
-            onClose={() => setShowProfile(false)}
-            onProfileUpdated={(updatedProfile) => {
-              setShowProfile(false);
-              setUser(updatedProfile);
-              // Optionally, re-fetch contacts or other data here if needed
             }}
           />
         )}

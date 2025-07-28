@@ -1,0 +1,399 @@
+/* SidebarContact.css */
+.sidebar-contact {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 12px 8px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  background: white;
+  border: 1px solid transparent;
+  min-height: 72px;
+}
+
+.sidebar-contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(102, 126, 234, 0.1), 
+    transparent
+  );
+  transition: left 0.6s ease;
+  z-index: 1;
+}
+
+.sidebar-contact:hover::before {
+  left: 100%;
+}
+
+.sidebar-contact:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-contact.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 
+    0 8px 32px rgba(102, 126, 234, 0.3),
+    0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.sidebar-contact.active .username {
+  color: white;
+  font-weight: 600;
+}
+
+.sidebar-contact.active .last-message,
+.sidebar-contact.active .timestamp {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.sidebar-contact.active .no-message {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar-contact.active .online-status {
+  border-color: white;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+/* Contact Indicator */
+.contact-indicator {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  background: transparent;
+  border-radius: 0 4px 4px 0;
+  transition: all 0.3s ease;
+}
+
+.sidebar-contact.active .contact-indicator {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  height: 36px;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Contact Content */
+.contact-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* Avatar Wrapper */
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.online-status {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  animation: onlinePulse 2s infinite;
+}
+
+@keyframes onlinePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Contact Info */
+.contact-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.last-message {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+  max-width: 200px;
+}
+
+.no-message {
+  font-style: italic;
+  color: #94a3b8;
+}
+
+/* Hover Glow Effect */
+.hover-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  opacity: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(102, 126, 234, 0.1) 0%,
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-contact:hover .hover-glow {
+  opacity: 1;
+}
+
+/* Unread Message Indicator */
+.sidebar-contact.unread::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: unreadPulse 1.5s infinite;
+}
+
+@keyframes unreadPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+/* Message Type Indicators */
+.last-message.typing {
+  color: #667eea;
+}
+
+.last-message.typing::before {
+  content: '💬 ';
+  animation: typingBounce 1.4s infinite;
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Active State Animations */
+.sidebar-contact.active .avatar-wrapper {
+  animation: avatarGlow 2s infinite;
+}
+
+@keyframes avatarGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  }
+}
+
+/* Micro Interactions */
+.sidebar-contact:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+.sidebar-contact.active:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Message Status Icons */
+.message-status {
+  margin-left: 4px;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.message-status.delivered {
+  color: #64748b;
+}
+
+.message-status.read {
+  color: #667eea;
+}
+
+/* Contact Group Separator */
+.contact-separator {
+  margin: 16px 16px 8px 16px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #e2e8f0 20%,
+    #e2e8f0 80%,
+    transparent 100%
+  );
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .sidebar-contact {
+    margin: 0 8px 6px 8px;
+    min-height: 64px;
+  }
+  
+  .contact-content {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .username {
+    font-size: 15px;
+  }
+  
+  .last-message {
+    font-size: 12px;
+    max-width: 160px;
+  }
+  
+  .timestamp {
+    font-size: 10px;
+  }
+  
+  .online-status {
+    width: 10px;
+    height: 10px;
+    border-width: 1.5px;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .sidebar-contact {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  .sidebar-contact:hover {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  }
+  
+  .username {
+    color: #f1f5f9;
+  }
+  
+  .last-message {
+    color: #94a3b8;
+  }
+  
+  .timestamp {
+    color: #64748b;
+  }
+  
+  .online-status {
+    border-color: #1e293b;
+  }
+}
+
+/* Loading State */
+.sidebar-contact.loading {
+  pointer-events: none;
+}
+
+.sidebar-contact.loading .contact-info {
+  animation: contentShimmer 1.5s infinite;
+}
+
+@keyframes contentShimmer {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Focus States for Accessibility */
+.sidebar-contact:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .sidebar-contact {
+    border: 2px solid #000;
+  }
+  
+  .sidebar-contact.active {
+    background: #000;
+    color: #fff;
+  }
+}

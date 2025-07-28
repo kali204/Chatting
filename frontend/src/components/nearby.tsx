@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './css/nearby.css';
 
 interface UserProfile {
   id: number;
@@ -8,16 +9,15 @@ interface UserProfile {
   distance: number;
 }
 
-const RADIUS_METERS = 100; // User search radius
+const RADIUS_METERS = 100;
 
 const Nearby: React.FC = () => {
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [requests, setRequests] = useState<number[]>([]); // IDs of users requested
+  const [requests, setRequests] = useState<number[]>([]);
 
-  // Get JWT token from storage (adapt if you store elsewhere)
   const token = localStorage.getItem('token');
   const axiosConfig = token
     ? { headers: { Authorization: `Bearer ${token}` } }
@@ -42,7 +42,7 @@ const Nearby: React.FC = () => {
         '/api/nearby/update_location',
         { lat: coords.lat, lon: coords.lon, visible: true },
         axiosConfig
-      ).catch(() => { /* (optional) set error */ });
+      ).catch(() => { });
     }
   }, [coords, token]);
 
@@ -85,46 +85,91 @@ const Nearby: React.FC = () => {
     }
   };
 
-  return (
-    <div className="nearby-container" style={{ padding: 20, maxWidth: 400, margin: "auto" }}>
-      <h2>Nearby Users</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading && <p>Loading...</p>}
-      {!loading && !error && !coords && <p>Waiting for location...</p>}
-      {!loading && users.length === 0 && coords && <p>No users nearby.</p>}
+  if (loading) {
+    return (
+      <div className="nearby-container">
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p>Finding nearby users...</p>
+        </div>
+      </div>
+    );
+  }
 
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {users.map((user) => (
-          <li key={user.id} style={{ margin: '1em 0', display: 'flex', alignItems: 'center' }}>
-            <img
-              src={user.avatar_url ?? '/default-avatar.png'}
-              alt={user.username}
-              style={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
-            />
-            <div style={{ flex: 1 }}>
-              <div>{user.username}</div>
-              <div style={{ fontSize: '0.85em', color: '#555' }}>
-                ~{Math.round(user.distance)}m away
+  return (
+    <div className="nearby-container">
+      <div className="nearby-header">
+        <h2 className="nearby-title">
+          <span className="location-icon">📍</span>
+          Nearby Users
+        </h2>
+        <div className="radius-badge">Within {RADIUS_METERS}m</div>
+      </div>
+
+      {error && (
+        <div className="error-message">
+          <span className="error-icon">⚠️</span>
+          {error}
+        </div>
+      )}
+
+      {!coords && !error && (
+        <div className="waiting-message">
+          <div className="pulse-dot"></div>
+          <p>Getting your location...</p>
+        </div>
+      )}
+
+      {coords && users.length === 0 && !error && (
+        <div className="empty-state">
+          <div className="empty-icon">🔍</div>
+          <h3>No one nearby</h3>
+          <p>Try expanding your search radius or check back later</p>
+        </div>
+      )}
+
+      {users.length > 0 && (
+        <div className="users-grid">
+          {users.map((user) => (
+            <div key={user.id} className="user-card">
+              <div className="user-avatar">
+                <img
+                  src={user.avatar_url ?? '/default-avatar.png'}
+                  alt={user.username}
+                  className="avatar-image"
+                />
+                <div className="online-indicator"></div>
               </div>
+              
+              <div className="user-info">
+                <h4 className="username">{user.username}</h4>
+                <div className="distance">
+                  <span className="distance-icon">📏</span>
+                  ~{Math.round(user.distance)}m away
+                </div>
+              </div>
+
+              <button
+                disabled={requests.includes(user.id)}
+                onClick={() => sendRequest(user.id)}
+                className={`request-button ${requests.includes(user.id) ? 'requested' : ''}`}
+              >
+                {requests.includes(user.id) ? (
+                  <>
+                    <span className="check-icon">✓</span>
+                    Requested
+                  </>
+                ) : (
+                  <>
+                    <span className="plus-icon">+</span>
+                    Connect
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              disabled={requests.includes(user.id)}
-              onClick={() => sendRequest(user.id)}
-              style={{
-                marginLeft: '1em',
-                background: requests.includes(user.id) ? '#ccc' : '#007bff',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 5,
-                padding: '0.3em 0.8em',
-                cursor: requests.includes(user.id) ? 'default' : 'pointer',
-              }}
-            >
-              {requests.includes(user.id) ? 'Requested' : 'Send Request'}
-            </button>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

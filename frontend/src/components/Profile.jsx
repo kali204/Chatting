@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import './css/Profile.css'
 function ProfileModal({ user, onClose, onProfileUpdated }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
