@@ -8,7 +8,7 @@ async function safeJson(response) {
   }
 }
 
-const BASE = '/api';
+const BASE = 'https://chatting-ifco.onrender.com';
 
 export const authService = {
   async login(email, password) {

@@ -1,4 +1,4 @@
-const API_URL = '/api';
+const API_URL = 'https://chatting-ifco.onrender.com';
 
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
