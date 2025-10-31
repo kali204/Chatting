@@ -36,7 +36,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 db = SQLAlchemy(app)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")  # important on PaaS
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
 
 
 @app.route("/")
@@ -611,6 +612,14 @@ def all_exception_handler(error):
     print("Unhandled exception:", error)
     traceback.print_exc()
     return jsonify({'message': 'Server error', 'error': str(error)}), 500
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+    response.headers.add("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS")
+    return response
+
 
 # --- Main Entrypoint ---
 if __name__ == '__main__':
